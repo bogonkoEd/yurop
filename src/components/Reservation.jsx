@@ -1,4 +1,9 @@
 import { useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import PaymentForm from './Payment';
+
+const stripePromise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx')
 
 const generateRoom = (roomData, onRoomSelect) => {
   const { title, description, size, beds, people, baths, costPerNight, imageURL } = roomData;
@@ -54,6 +59,7 @@ const Reservation = () => {
   });
 
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const [isPaymentScreenVisible, setIsPaymentScreenVisible] = useState(false);
 
   const handleFilterChange = (field, value) => {
     setFilter((prevFilter) => ({
@@ -66,8 +72,13 @@ const Reservation = () => {
     setSelectedRoom(roomData);
   };
 
+  const handlePaymentSuccess = () => {
+    selectedRoom(null)
+    setIsPaymentScreenVisible(false);
+  }
+
   return (
-    <div className="border-4 h-[150lvh] bg-[#fdbb37] flex flex-col items-center justify-center ">
+    <div className="border-4 h-[150lvh] bg-[#fdbb37] flex flex-col items-center justify-center">
       <div className="mb-12 mt-5 ml-2 text-center">
         <p className="text-5xl text-[#6e477b] font-bold underline underline-offset-4 ">
           Our Offerings
@@ -171,6 +182,11 @@ const Reservation = () => {
           </div>
           {selectedRoom && (
             <div className="border-2 border-black h-[50lvh] w-[90%] m-4 flex">
+              {isPaymentScreenVisible ? (
+                <Elements stripe={stripePromise}>
+                  <PaymentForm onPaymentSuccess={handlePaymentSuccess} />
+                </Elements>
+              ) : (
               <section className="pt-5 pl-5">
                 <p className="text-3xl font-bold m-2 ">Reservation Summary</p>
                 <p className="text-3xl font-semibold text-[#6e477b] mt-9">
@@ -212,10 +228,11 @@ const Reservation = () => {
                     </div>
                   </div>
                 </div>
-                <button className="bg-[#6e477b] text-[#fdbb37] px-4 py-2 rounded-lg mt-4 mb-4 self-center">
-                  Book Now
+                <button className="bg-[#6e477b] text-[#fdbb37] px-4 py-2 rounded-lg mt-4 mb-4 self-center" onClick={() => setIsPaymentScreenVisible(true)}>
+                  Proceed to Payment
                 </button>
               </section>
+              )}
             </div>
           )}
         </div>

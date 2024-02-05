@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 const Contact = () => {
   return (
-    <div className="border-4 border-black h-[45lvh] bg-[#6e477b] flex flex-col items-center justify-center ">
+    <div className="border-4 border-black h-auto py-10 bg-[#6e477b] flex flex-col items-center justify-center ">
       
         <h2 className="text-4xl font-bold mb-6 text-center underline">Contact Us</h2>
         <p className="text-lg mb-8 text-center">
